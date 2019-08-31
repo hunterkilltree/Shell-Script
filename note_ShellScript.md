@@ -19,7 +19,16 @@ chmod +x namefile.sh    # to add execute permission to the file
                         # +x is telling to add (+) the executable bit (x) to the owner, group and others.
 uname -a                # show all system information
 zip nameFile fileNeedtoZip.extend
+lscpu                   # show cpu information
+cat /proc/meminfo       # show ram bla bla
 
+
+```
+
+### Some Special Commands
+```console
+install apt install htop
+htop                     # like task manager in window
 ```
 
 ### Variables
@@ -82,7 +91,29 @@ fi
 | -le               |       <=     | Less than or equal          |
 | -z                |       == null| Is null                     |
 
+### Looping
+Using **for**, **while**, **loops**. In example: **for...in**
+```console
+#!/bin/bash
 
+FILES = /Users/.....
+for file in $FILES
+do
+    echo $(basename $file)
+done
+```
+
+### Git Example Script
+```console
+#!/bin/bash
+
+read -r -p 'Commit message: ' desc  # prompt user for commit message
+git add .                           # track all files
+git add -u                          # track deletes
+git commit -m "$desc"               # commit with message
+git push origin master              # push to origin
+
+```
 
 ### Vim mode
 * press **i** ,  --INSERT-- mode
@@ -96,3 +127,7 @@ fi
     * press **Ctrl + r**, redo
     * press **:q!**, "quit and throw things away"
     * press **:x**, save file
+
+
+
+### Makefile
