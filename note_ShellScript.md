@@ -81,6 +81,7 @@ fi
 ```
 **Note :**
  * Invalid when you are missing space example : if ["$year" -gt 1998]
+ 
 | **Bash Operator** | **Operator** | **Description**             |  
 |-------------------|------------- | ----------------------------|
 | -eq               |       ==     | Equal                       |
