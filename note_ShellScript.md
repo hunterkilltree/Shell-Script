@@ -6,10 +6,11 @@
 **Bash** is a UNIX Shell, which is a command line interface (CLI) for interacting with an operating system (OS). Scripts are used to run a **series of commands**.
 
 ##### Why we need it ? (Collect from Quora)
-*
-*
-*
-*
+* You can write a script to initialize something at boot time of the system. so you don't need to do manually.
+* You can write a script which installs per-requisite and build the code with user input to enable/disable some features.
+* To kill or start multiple applications together.
+* To observe large database of files and find some patterns out of it.
+* So in general to automate the process and the list goes on....
 
 ### Common Commands
 ```console
