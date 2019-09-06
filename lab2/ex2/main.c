@@ -4,32 +4,33 @@
 int main(int argc, char const *argv[]) {
     char str[100], *pstr;
     int ans;
-    FILE *f;
+    // FILE *f;
+    //
+    // f = fopen("text.txt", "r");
+    // if (f == NULL) {
+    //    printf("Error");
+    //    return 1;
+    // }
+    do {
+        pstr = fgets(str, 150, stdin);
+        ans = read_line(pstr);
+        printf("%d\n", ans);
 
-    f = fopen("text.txt", "r");
-    if (f == NULL) {
-       printf("Error");
-       return 1;
+        pstr = fgets(str, 150, stdin);
+        ans = read_line(pstr);
+        printf("%d\n", ans);
+
+
+        pstr = fgets(str, 150, stdin);
+        ans = read_line(pstr);
+        printf("%d\n", ans);
+
+        pstr = fgets(str, 150, stdin);
+        ans = read_line(pstr);
+        printf("%d\n", ans);
     }
-
-    pstr = fgets(str, 150, f);
-    ans = read_line(pstr);
-    printf("%d\n", ans);
-
-    pstr = fgets(str, 150, f);
-    ans = read_line(pstr);
-    printf("%d\n", ans);
-
-
-    pstr = fgets(str, 150, f);
-    ans = read_line(pstr);
-    printf("%d\n", ans);
-
-    pstr = fgets(str, 150, f);
-    ans = read_line(pstr);
-    printf("%d\n", ans);
-
-    fclose(f);
+    while (pstr != NULL);
+    //fclose(f);
 
     return 0;
 }

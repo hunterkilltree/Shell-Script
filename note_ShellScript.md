@@ -23,6 +23,10 @@ zip nameFile fileNeedtoZip.extend
 lscpu                   # show cpu information
 cat /proc/meminfo       # show ram bla bla
 
+cd /proc/ID
+cat maps
+cat heaps              # show heaps memory
+
 
 ```
 
@@ -82,7 +86,7 @@ fi
 ```
 **Note :**
  * Invalid when you are missing space example : if ["$year" -gt 1998]
- 
+
 | **Bash Operator** | **Operator** | **Description**             |  
 |-------------------|------------- | ----------------------------|
 | -eq               |       ==     | Equal                       |
