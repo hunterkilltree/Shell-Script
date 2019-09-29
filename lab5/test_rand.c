@@ -21,7 +21,7 @@ int main(int argc, char **argv) {
     while(i <= MAX_INPUT) {
         x_axis = (rand_r(&seed) - rand_r(&seed) ) * 1.0 / (RAND_MAX *1.0);
         y_axis = (rand_r(&seed) - rand_r(&seed) ) * 1.0 / (RAND_MAX * 1.0);
-        printf("%.5f %.5f\n", x_axis, y_axis);
+        //printf("%.5f %.5f\n", x_axis, y_axis);
         i++;
     }
 

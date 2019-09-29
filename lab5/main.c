@@ -3,15 +3,15 @@
 #include <time.h>
 #include <pthread.h>
 
-#define MAX_INPUT 100000000
 #define NUM_THREAD 4
 
 int counter[NUM_THREAD] = {0, 0, 0, 0};
 int n = 0;
+int numberOfPointsInCircle = 0;
 
 
 void* genPoints(void* id) {
-    int index = (int*) id;
+    int index = (int)id;
 
     unsigned int seed = rand() % 10000;
 
@@ -21,14 +21,15 @@ void* genPoints(void* id) {
     int i = 1;
 
     while(i <= n) {
-        x_axis = (rand_r(&seed) - rand_r(&seed))*1.0 / (RAND_MAX *1.0);
-        y_axis = (rand_r(&seed) - rand_r(&seed)) *1.0 / (RAND_MAX *1.0);
-
-        if ( x * x + y * y <= 1)
+		x_axis = (float)(rand_r(&seed)) / (float)(RAND_MAX  / 2) -  1;
+		y_axis = (float)(rand_r(&seed)) / (float)(RAND_MAX  / 2)-  1;
+		
+        if ( x_axis* x_axis + y_axis* y_axis <= 1)
             counter[index]++;
 
         i++;
     }
+    
     pthread_exit(0);
 }
 
@@ -51,6 +52,7 @@ int main(int argc, char **argv) {
 
     pthread_t tid[NUM_THREAD];
 
+
     srand(time(0));
     clock_t beginTime, endTime;
     double elapsedTime;
@@ -60,25 +62,27 @@ int main(int argc, char **argv) {
     for (i  = 0; i < NUM_THREAD; i++) {
         pthread_attr_t attr;
         pthread_attr_init(&attr);
-        pthread_create(&tid[i], &attr, genPoints, &i);
+        pthread_create(&tid[i], &attr, genPoints, (void*)i);
     }
 
     //Wait until thread is done its work
     for (i  = 0; i < NUM_THREAD; i++) {
         pthread_join(tid[i], NULL);
-        count += counter[i];
+        numberOfPointsInCircle += counter[i];
 
     }
 
     float valueOfPi;
     valueOfPi = 4 * (1.0 * numberOfPointsInCircle) / (1.0 * numberOfPoints);
+    printf("Inside : %d\n", numberOfPointsInCircle);
     printf("pi : %.5f\n", valueOfPi);
 
     endTime = clock();
 
 
-    elapsedTime = (double) (endTime - beginTime);
-    printf("Elapsed time%f\n", elapsedTime / CLOCKS_PER_SEC);
+    elapsedTime = (double) (endTime - beginTime) ;
+    
+    printf("Elapsed time; %f\n", (elapsedTime / NUM_THREAD) / CLOCKS_PER_SEC); // need to divide the NUM_THREAD
 
     return 0;
 }
