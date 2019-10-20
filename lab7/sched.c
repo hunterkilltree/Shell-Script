@@ -38,14 +38,12 @@ void * cpu(void * arg) {
 			*/
 			int exec_time = 0;
 
-			// TODO: Calculate exec_time from process's PCB
+			// TODO: Calculate exec_time from process's PCB			
+			// YOUR CODE HERE
 			exec_time = proc->burst_time;
 			if (exec_time > timeslot) {
 				exec_time = timeslot;
 			}
-			
-			
-			// YOUR CODE HERE
 			
 			/* Emulate the execution of the process by using
 			 * 'usleep()' function */
@@ -57,16 +55,12 @@ void * cpu(void * arg) {
 			// TODO: Check if the process has terminated (i.e. its
 			// burst time is zero. If so, free its PCB. Otherwise,
 			// put its PCB back to the queue.
+			// YOUR CODE HERE
 			proc->burst_time =  proc->burst_time - exec_time;
 			if (proc->burst_time > 0) {
 				en_queue(&ready_queue, proc);
 			}
 				
-			
-			
-			
-			// YOUR CODE HERE
-			
 			/* Track runtime status */
 			printf("%2d-%2d: Execute %d\n", start, timestamp, id);
 		}
@@ -126,11 +120,6 @@ int main() {
 
 	/* Read a list of jobs to be run */
 	load_task();
-
-	
-	//check();
-	//check();
-	//check();
 
 	/* Start cpu */
 	pthread_create(&cpu_id, NULL, cpu, NULL);
