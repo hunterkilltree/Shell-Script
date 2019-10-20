@@ -39,6 +39,11 @@ void * cpu(void * arg) {
 			int exec_time = 0;
 
 			// TODO: Calculate exec_time from process's PCB
+			exec_time = proc->burst_time;
+			if (exec_time > timeslot) {
+				exec_time = timeslot;
+			}
+			
 			
 			// YOUR CODE HERE
 			
@@ -52,6 +57,13 @@ void * cpu(void * arg) {
 			// TODO: Check if the process has terminated (i.e. its
 			// burst time is zero. If so, free its PCB. Otherwise,
 			// put its PCB back to the queue.
+			proc->burst_time =  proc->burst_time - exec_time;
+			if (proc->burst_time > 0) {
+				en_queue(&ready_queue, proc);
+			}
+				
+			
+			
 			
 			// YOUR CODE HERE
 			
@@ -116,20 +128,20 @@ int main() {
 	load_task();
 
 	
-	check();
-	check();
-	check();
+	//check();
+	//check();
+	//check();
 
 	/* Start cpu */
-	//pthread_create(&cpu_id, NULL, cpu, NULL);
+	pthread_create(&cpu_id, NULL, cpu, NULL);
 	/* Start loader */
-	//pthread_create(&loader_id, NULL, loader, NULL);
+	pthread_create(&loader_id, NULL, loader, NULL);
 
 	/* Wait for cpu and loader */
-	//pthread_join(cpu_id, NULL);
-	//pthread_join(loader_id, NULL);
+	pthread_join(cpu_id, NULL);
+	pthread_join(loader_id, NULL);
 
-	//pthread_exit(NULL);
+	pthread_exit(NULL);
 
 	return 0;
 
