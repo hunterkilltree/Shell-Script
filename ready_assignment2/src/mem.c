@@ -42,7 +42,7 @@ static addr_t get_second_lv(addr_t addr) {
 static struct page_table_t * get_page_table(
 		addr_t index, 	// Segment level index
 		struct seg_table_t * seg_table) { // first level table
-	
+
 	/*
 	 * TODO: Given the Segment index [index], you must go through each
 	 * row of the segment table [seg_table] and check if the v_index
@@ -53,6 +53,12 @@ static struct page_table_t * get_page_table(
 	int i;
 	for (i = 0; i < seg_table->size; i++) {
 		// Enter your code here
+		if (index == seg_table->table[i].v_index) 	{
+			// debug
+			//printf("test");
+			return seg_table->table[i].pages;
+		}
+
 	}
 	return NULL;
 
@@ -72,25 +78,27 @@ static int translate(
 	addr_t first_lv = get_first_lv(virtual_addr);
 	/* The second layer index */
 	addr_t second_lv = get_second_lv(virtual_addr);
-	
+
 	/* Search in the first level */
 	struct page_table_t * page_table = NULL;
 	page_table = get_page_table(first_lv, proc->seg_table);
 	if (page_table == NULL) {
 		return 0;
 	}
-
+	//printf("fdsfadsfafa\n");
 	int i;
 	for (i = 0; i < page_table->size; i++) {
 		if (page_table->table[i].v_index == second_lv) {
 			/* TODO: Concatenate the offset of the virtual addess
-			 * to [p_index] field of page_table->table[i] to 
+			 * to [p_index] field of page_table->table[i] to
 			 * produce the correct physical address and save it to
 			 * [*physical_addr]  */
+			//offset Concatenate page_table->table[i].p_index
+			*physical_addr =  page_table->table[i].p_index  << OFFSET_LEN | offset;
 			return 1;
 		}
 	}
-	return 0;	
+	return 0;
 }
 
 addr_t alloc_mem(uint32_t size, struct pcb_t * proc) {
@@ -100,6 +108,10 @@ addr_t alloc_mem(uint32_t size, struct pcb_t * proc) {
 	 * process [proc] and save the address of the first
 	 * byte in the allocated memory region to [ret_mem].
 	 * */
+	proc->code->size = size;
+
+
+	ret_mem = *proc->regs; // regs is the number of register which holds the address of the first byte of the memory region to be deallocated.
 
 	uint32_t num_pages = ((size % PAGE_SIZE) == 0) ? size / PAGE_SIZE :
 		size / PAGE_SIZE + 1; // Number of pages we will use
@@ -107,13 +119,20 @@ addr_t alloc_mem(uint32_t size, struct pcb_t * proc) {
 
 	/* First we must check if the amount of free memory in
 	 * virtual address space and physical address space is
-	 * large enough to represent the amount of required 
+	 * large enough to represent the amount of required
 	 * memory. If so, set 1 to [mem_avail].
 	 * Hint: check [proc] bit in each page of _mem_stat
 	 * to know whether this page has been used by a process.
 	 * For virtual memory space, check bp (break pointer).
 	 * */
-	
+	 int i;
+	 for (i = 0; i < NUM_PAGES; i++) {
+		 if (_mem_stat[i].proc == 0) {
+			 mem_avail = 1;
+			 break;
+		 }
+	 }
+
 	if (mem_avail) {
 		/* We could allocate new memory region to the process */
 		ret_mem = proc->bp;
@@ -124,6 +143,18 @@ addr_t alloc_mem(uint32_t size, struct pcb_t * proc) {
 		 * 	- Add entries to segment table page tables of [proc]
 		 * 	  to ensure accesses to allocated memory slot is
 		 * 	  valid. */
+		 _mem_stat[i].proc = proc->pid;
+		 //_mem_stat[i].index = proc->seg_table->table->pages->size;
+
+		 // check last page
+		 if (i < NUM_PAGES) {
+		 		 _mem_stat[i].next = i;
+
+		 }
+		 else {
+			  _mem_stat[i].next = -1;
+		 }
+
 	}
 	pthread_mutex_unlock(&mem_lock);
 	return ret_mem;
@@ -138,6 +169,17 @@ int free_mem(addr_t address, struct pcb_t * proc) {
 	 * 	  the process [proc].
 	 * 	- Remember to use lock to protect the memory from other
 	 * 	  processes.  */
+		//pthread_mutex_lock(&mem_lock);
+		if (address == *proc->regs) {
+			printf("fdsafasdf\n");
+			//to know whether this page has been used by a process.
+	 	 	// For virtual memory space, check bp (break pointer).
+			//proc->bp = 0; // maybe
+			//proc->seg_table->tables = 0;
+
+			//pthread_mutex_unlock(&mem_lock);
+			return 1;
+	}
 	return 0;
 }
 
@@ -177,14 +219,12 @@ void dump(void) {
 			for (	j = i << OFFSET_LEN;
 				j < ((i+1) << OFFSET_LEN) - 1;
 				j++) {
-				
+
 				if (_ram[j] != 0) {
 					printf("\t%05x: %02x\n", j, _ram[j]);
 				}
-					
+
 			}
 		}
 	}
 }
-
-
