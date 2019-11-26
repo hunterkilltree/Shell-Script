@@ -358,8 +358,8 @@ addr_t alloc_mem(uint32_t size, struct pcb_t * proc) {
 	 	 }
 
 
-		uint32_t MaxBreakPoint = proc->bp + NUM_PAGES * PAGE_SIZE;
-		 uint32_t temp = proc->bp + num_pages * PAGE_SIZE;
+		// uint32_t MaxBreakPoint = proc->bp + NUM_PAGES * PAGE_SIZE;
+		//  uint32_t temp = proc->bp + num_pages * PAGE_SIZE;
 		 if (numberOfPagesFree >= num_pages && num_pages < (1 << SEGMENT_LEN) ) { // check size of memory  and virtual memory
 		 		 mem_avail = 1;
 		 	 }
@@ -376,17 +376,17 @@ addr_t alloc_mem(uint32_t size, struct pcb_t * proc) {
 	 		 * 	  to ensure accesses to allocated memory slot is
 	 		 * 	  valid. */
 
- 			 uint32_t sizeNeedForEachSeg = size;
-
- 			 if (sizeNeedForEachSeg % 1024 == 0) {
- 				 sizeNeedForEachSeg = sizeNeedForEachSeg / 1024;
- 			 } else {
- 				 sizeNeedForEachSeg= (uint32_t)(sizeNeedForEachSeg / 1024) ;
- 			 }
+ 			 // uint32_t sizeNeedForEachSeg = size;
+			 //
+ 			 // if (sizeNeedForEachSeg % 1024 == 0) {
+ 				//  sizeNeedForEachSeg = sizeNeedForEachSeg / 1024;
+ 			 // } else {
+ 				//  sizeNeedForEachSeg= (uint32_t)(sizeNeedForEachSeg / 1024) ;
+ 			 // }
  			 //printf("%d\n", sizeNeedForEachSeg); // euqal num_pages
- 			 struct page_table_t * page_tmp= (struct page_table_t*)malloc(sizeNeedForEachSeg * sizeof(struct page_table_t));
- 			 int indexOfFirstLayerFrom = get_first_lv(ret_mem);
- 			 int indexOfFirstLayerTo = get_first_lv(proc->bp);
+ 			 struct page_table_t * page_tmp= (struct page_table_t*)malloc( sizeof(struct page_table_t));
+ 			 // int indexOfFirstLayerFrom = get_first_lv(ret_mem);
+ 			 // int indexOfFirstLayerTo = get_first_lv(proc->bp);
  			 // printf("From %05x to %05x\n", indexOfFirstLayerFrom, indexOfFirstLayerTo);
 			 //
 			 // printf("Size : %02x\n", size);
@@ -400,40 +400,41 @@ addr_t alloc_mem(uint32_t size, struct pcb_t * proc) {
 				if(proc->seg_table->size == 0) {
 					proc->seg_table->table[0].pages = page_tmp;
 					page_tmp->table[0].p_index = 0;
-					proc->seg_table->table[0].v_index = get_first_lv(ret_mem + PAGE_SIZE);
+					proc->seg_table->table[0].v_index = get_first_lv(ret_mem );
 					proc->seg_table->size++;
 				}
-			 		int seg_count = proc->seg_table->size;
-			 		int pages_count = proc->seg_table->table[seg_count  - 1].pages->size;
-
-			 		int count = 0;
+					int count = 0;
 			 		int pre_index = 0;
-			 		page_tmp = proc->seg_table->table[seg_count  - 1].pages;
+
+					// vi size = 5 thi co the accesses 0 - 4
+			 		page_tmp = proc->seg_table->table[proc->seg_table->size - 1].pages;
 
 			 		for(int i = 0; i < NUM_PAGES; i++)
 			 		{
 
 			 			if(_mem_stat[i].proc == 0) {
-			 			if( count > 0 )
-			 				{
-			 					_mem_stat[pre_index].next = i;
-			 				}
+				 			if( count > 0 )
+				 				{
+				 					_mem_stat[pre_index].next = i;
+				 				}
 			 			_mem_stat[i].proc = proc->pid;
 			 			_mem_stat[i].index = count;
 			 				pre_index = i;
-			 				page_tmp->table[pages_count].p_index =i;
-			 				page_tmp->table[pages_count].v_index = get_second_lv(ret_mem + count * PAGE_SIZE);
+
+							page_tmp->table[page_tmp->size].p_index = i; // bang ben trong
+			 				page_tmp->table[page_tmp->size].v_index = get_second_lv(ret_mem +  (addr_t)count * PAGE_SIZE); // ben ben trong ung voi 1 Segment
 			 				page_tmp->size++;
-			 				pages_count++;
-			 				if(pages_count !=0 && pages_count % 32 == 0)
+
+
+							// het 1 page qua seg moi
+			 				if (	page_tmp->size != 0 && 	page_tmp->size % 32 == 0)
 			 				{
-			 					proc->seg_table->table[seg_count].v_index = get_first_lv(ret_mem + (count + 1) * PAGE_SIZE);
-			 					page_tmp = NULL;
-			 					page_tmp = proc->seg_table->table[seg_count].pages;
+
+			 					proc->seg_table->table[	proc->seg_table->size].v_index = get_first_lv(ret_mem + (addr_t)count  * PAGE_SIZE);
+			 					page_tmp = proc->seg_table->table[	proc->seg_table->size].pages;
+
 			 					proc->seg_table->size++;
-			 					seg_count++;
-			 					pages_count = 0;
-			 					page_tmp->size=0;
+
 			 				}
 			 				count++;
 
@@ -441,7 +442,7 @@ addr_t alloc_mem(uint32_t size, struct pcb_t * proc) {
 			 				if(count == num_pages)
 			 				{
 			 					_mem_stat[i].next = -1;
-							//	free(page_tmp);
+
 			 					break;
 
 			 				}
