@@ -137,3 +137,31 @@ git push origin master              # push to origin
 
 
 ### Makefile
+To compile C code in linux, we can use directly with command :
+```
+gcc main.c -o namefile
+```
+In this commnad, the gcc compiler will convert **main.c** into lower level language (or object file) to create an executable program.
+
+To manage all the source code, we should create a **makefile**. An example below introduces the simple way to write a makefile:
+```
+all: main.o
+  gcc main.o -o main
+clean:
+  rm -f *.o main
+debug:
+  echo "Test run"
+```
+
+This example shows the way to compile your C code that work with multiple thread:
+```
+all: main.o
+	gcc main.o -o main -lpthread
+clean:
+	rm -f *.o main
+debug:
+	echo "Test run"
+```
+
+
+
