@@ -146,11 +146,11 @@ In this commnad, the gcc compiler will convert **main.c** into lower level langu
 To manage all the source code, we should create a **makefile**. An example below introduces the simple way to write a makefile:
 ```
 all: main.o
-  gcc main.o -o main
+	gcc main.o -o main
 clean:
-  rm -f *.o main
+	rm -f *.o main
 debug:
-  echo "Test run"
+	echo "Test run"
 ```
 
 This example shows the way to compile your C code that work with multiple thread:
@@ -162,6 +162,9 @@ clean:
 debug:
 	echo "Test run"
 ```
-
+**Reference:**
+	* http://www.cs.colby.edu/maxwell/courses/tutorials/maketutor/
+	* https://www.gnu.org/software/make/manual/make.html
+	
 
 
